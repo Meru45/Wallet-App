@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { Card } from "@repo/ui/card";
 import { Code } from "@repo/ui/code";
