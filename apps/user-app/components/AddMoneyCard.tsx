@@ -5,6 +5,7 @@ import { Card } from "@repo/ui/card";
 import { InputBox } from "@repo/ui/input-box";
 import { Select } from "@repo/ui/select";
 import { useState } from "react";
+import { createOnRampTransaction } from "../app/lib/actions/createOnRampTransaction";
 
 const SUPPORTED_BANKS = [
   {
@@ -19,9 +20,14 @@ const SUPPORTED_BANKS = [
 
 export const AddMoneyCard = () => {
   const [amount, setAmount] = useState<number>(0);
-  const [redirectURL, setRedirectURL] = useState<string>(
+  const [redirectURL, setRedirectURL] = useState<string | undefined>(
     SUPPORTED_BANKS[0]?.redirectUrl,
   );
+  const [provider, setProvider] = useState<string | undefined>(
+    SUPPORTED_BANKS[0]?.name,
+  );
+
+  const url404 = "/fdadfdasfdsf";
 
   return (
     <Card title="Add Money">
@@ -39,13 +45,25 @@ export const AddMoneyCard = () => {
             setRedirectURL(
               SUPPORTED_BANKS.find((x) => x.name === value)?.redirectUrl || "",
             );
+            setProvider(
+              SUPPORTED_BANKS.find((x) => x.name === value)?.name || "",
+            );
           }}
           options={SUPPORTED_BANKS.map((bank) => {
             return { key: bank.name, value: bank.name };
           })}
         />
         <div className="flex justify-center pt-4">
-          <Button onClick={() => (window.location.href = redirectURL || "")}>
+          <Button
+            onClick={async () => {
+              if (provider == undefined) {
+                window.location.href = url404;
+              } else {
+                await createOnRampTransaction(provider, amount);
+                window.location.href = redirectURL || "";
+              }
+            }}
+          >
             Add Money
           </Button>
         </div>

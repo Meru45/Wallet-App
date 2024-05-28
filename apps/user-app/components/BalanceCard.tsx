@@ -1,8 +1,8 @@
 import { Card } from "@repo/ui/card";
 
 export const BalanceCard = ({
-  amount = 0,
-  locked = 0,
+  amount,
+  locked,
 }: {
   amount: number;
   locked: number;
