@@ -28,7 +28,7 @@ export async function sendMoney(to: string, amount: number) {
   try {
     await prisma.$transaction(async (tx) => {
       //Locking the balance of the sender
-      await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(session.user.id)} FOR UPDATE`;
+      await tx.$queryRaw`SELECT * FROM "Balances" WHERE "userId" = ${Number(session.user.id)} FOR UPDATE`;
 
       const fromBalance = await tx.balances.findUnique({
         where: { userId: Number(session.user.id) },
@@ -45,15 +45,30 @@ export async function sendMoney(to: string, amount: number) {
             decrement: amount,
           },
         },
-      }),
-        await tx.balances.update({
-          where: { userId: Number(foundUser.id) },
-          data: {
-            amount: {
-              increment: amount,
-            },
+      });
+
+      await tx.balances.upsert({
+        where: { userId: Number(foundUser.id) },
+        update: {
+          amount: {
+            increment: amount,
           },
-        });
+        },
+        create: {
+          amount: amount,
+          userId: foundUser.id,
+          locked: 0,
+        },
+      });
+
+      await tx.p2PTransactions.create({
+        data: {
+          amount: amount,
+          timestamp: new Date(),
+          fromUserId: Number(session.user.id),
+          toUserId: foundUser.id,
+        },
+      });
     });
 
     return { success: true, msg: `Sent amount ${amount} to ${to}` };

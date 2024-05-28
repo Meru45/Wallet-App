@@ -4,8 +4,8 @@ interface Transaction {
   time: Date;
   amount: number;
   //TODO: Make the type of 'status' be more specific
-  status: string;
-  provider: string;
+  status?: string;
+  provider?: string;
 }
 
 export const OnRampTransactions = ({
@@ -29,7 +29,7 @@ export const OnRampTransactions = ({
           <div className="text-sm">Received INR</div>
           <div className="text-slate-600 text-xs">{t.time.toDateString()}</div>
         </div>
-        <div>+ Rs {t.amount / 100}</div>
+        <div>+ Rs {t.amount}</div>
       </div>
     );
   });

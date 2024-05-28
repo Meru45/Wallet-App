@@ -27,11 +27,12 @@ model User {
 }
 
 model P2PTransactions {
-    id         Int  @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
     amount     Int
+    timestamp  DateTime
     fromUserId Int
-    fromUser   User @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
-    toUser     User @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+    fromUser   User     @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
+    toUser     User     @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
     toUserId   Int
 }
 
