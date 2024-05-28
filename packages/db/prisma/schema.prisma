@@ -15,13 +15,24 @@ datasource db {
 }
 
 model User {
-    id                Int                 @id @default(autoincrement())
-    name              String?
-    email             String?             @unique
-    number            String              @unique
-    password          String
-    Balances          Balances[]
-    OnRampTransaction OnRampTransaction[]
+    id                   Int                 @id @default(autoincrement())
+    name                 String?
+    email                String?             @unique
+    number               String              @unique
+    password             String
+    Balances             Balances[]
+    OnRampTransaction    OnRampTransaction[]
+    sentTransactions     P2PTransactions[]   @relation(name: "FromUserRelation")
+    receivedTransactions P2PTransactions[]   @relation(name: "ToUserRelation")
+}
+
+model P2PTransactions {
+    id         Int  @id @default(autoincrement())
+    amount     Int
+    fromUserId Int
+    fromUser   User @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
+    toUser     User @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+    toUserId   Int
 }
 
 model Merchant {
