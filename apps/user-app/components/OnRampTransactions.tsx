@@ -9,6 +9,7 @@ interface Transaction {
 }
 
 export const OnRampTransactions = ({
+  //TODO: Render the status of the transaction also
   transactions,
 }: {
   transactions: Transaction[];
